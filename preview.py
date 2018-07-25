@@ -1,57 +1,44 @@
 #!/usr/bin/env python
 
-import numpy
-import webbrowser
+import tensorflow as tf
 
-from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-
-template_file = """
-<html>
-<head>
-  <title>Tensorflow layer preview</title>
-</head>
-<body>
-    <pre>%s</pre>
-</body>
-"""
+import tornado
+import tornado.web
+import tornado.ioloop
 
 
-def MkHandler(data):
-    class Handler(BaseHTTPRequestHandler):
-        def _handler(self):
-            self.send_response(200)
-            self.wfile.write("OK")
-            self.wfile.close()
-
-        def do_POST(self):
-            self._handler()
-
-        def do_GET(self):
-            self.send_response(200)
-            self.wfile.write(template_file % (data))
-            self.wfile.close()
-            self.server.handle_request()
-    return Handler
+def make_APIHandler(iol):
+    class APIHandler(tornado.web.RequestHandler):
+        def get(self):
+            print "Issuing HTTP server halt ..."
+            iol.stop()
+    return APIHandler
 
 
-def go_server_wait_post(data):
-    s = HTTPServer(("", 18899), MkHandler(data))
-    s.handle_request()
+class PreviewServer():
+    def __init__(self, port=18899):
+        self.host = ""
+        self.port = port
+        self.iol  = tornado.ioloop.IOLoop.instance()
+        self.app  = tornado.web.Application([
+            (r"/api", make_APIHandler(self.iol)),
+            (r"/(.*)", tornado.web.StaticFileHandler, {
+                "path": "./preview-app/build",
+                "default_filename": "index.html",
+            }),
+        ])
+        self.httpd = tornado.httpserver.HTTPServer(self.app)
+        self.httpd.listen(self.port)
 
+    def block_func(self, *args, **kwargs):
+        print "block func called"
+        print args
+        for a in args:
+            print a, type(a)
 
-def op_preview(*args):
-    summary = "TF Summary:\n\n"
-    for arg in args:
-        if type(arg) == numpy.ndarray:
-            summary += "Array: [\n"
-            for item in arg:
-                summary += "  " + str(item) + "\n"
-            summary += "]\n"
-        else:
-            summary += str(arg)
-        summary += "\n"
+        self.iol.start()
+        return args
 
-    webbrowser.open("http://localhost:18899", new=0)
-    go_server_wait_post(summary)
-
-    return args
+    def op(self, *args, **kwargs):
+        print "op called!"
+        return tf.py_func(self.block_func, *args)
