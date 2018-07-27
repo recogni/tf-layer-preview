@@ -27,6 +27,7 @@ def main():
     with tf.Session() as sess:
         sess.run(op)
         sess.run(op)
+        sess.run(op)
 
 
 if __name__ == "__main__":
