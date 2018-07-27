@@ -1,8 +1,10 @@
-import React, { Component } from "react";
+import React, {Component} from "react";
+import {FaArrowRight}     from "react-icons/lib/fa";
+import axios              from "axios";
+
 import "./App.css";
 import Websocket from "./components/Websocket";
-import {FaArrowRight} from "react-icons/lib/fa";
-import axios from "axios";
+
 
 class App extends Component {
 
@@ -18,21 +20,12 @@ class App extends Component {
   }
 
   onSocketMessage(e) {
-    console.log("Got socket message:");
-    console.log(e);
-
     const msg = e.data || "Error";
-    this.setState({ message: msg }, function() {
-      console.log("State update done");
-    });
+    this.setState({ message: msg });
   }
 
   toolbarNext() {
-    axios.get("http://localhost:18899/api")
-      .then(res => {
-        console.log("Done");
-        console.log(res);
-      });
+    axios.get("http://localhost:18899/api");
   }
 
   render() {
@@ -54,5 +47,6 @@ class App extends Component {
     );
   }
 }
+
 
 export default App;
