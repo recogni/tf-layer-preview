@@ -1,11 +1,14 @@
+// 3rd party imports.
 import React, {Component} from "react";
 import {FaArrowRight}     from "react-icons/lib/fa";
 import axios              from "axios";
 
+// Application imports.
 import "./App.css";
 import Websocket from "./components/Websocket";
 import proto     from "./proto/preview_pb";
 
+// App class definition.
 class App extends Component {
 
   constructor(props) {
@@ -14,8 +17,6 @@ class App extends Component {
     this.onSocketMessage = this.onSocketMessage.bind(this);
     this.toolbarNext     = this.toolbarNext.bind(this);
 
-    this.debug = {}
-
     this.state = {
       message: "Loading last argument(s) ...",
       error:   "",
@@ -23,13 +24,8 @@ class App extends Component {
   }
 
   onSocketMessage(e) {
-    const msg = e.data || "Error";
-    let buf = new TextEncoder().encode(msg)
+    let buf = new TextEncoder().encode(e.data)
     let pkt = proto.Packet.deserializeBinary(buf);
-    console.log(msg);
-    console.log(buf);
-    console.log(pkt.toObject())
-    this.debug = pkt;
 
     if (pkt.hasMessage()) {
       this.setState({ message: pkt.getMessage() });
@@ -64,5 +60,5 @@ class App extends Component {
   }
 }
 
-
+// Expose the `App`.
 export default App;

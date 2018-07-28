@@ -20,12 +20,15 @@ app_sockets = {}
 app_packet  = proto.Packet(message="Loading ...")
 
 
-def mk_APIHandler(iol):
-    class APIHandler(tornado.web.RequestHandler):
+def mk_NextOpHandler(iol):
+    class NextOpHandler(tornado.web.RequestHandler):
+        """ In order to issue the next op, halt the ioloop and return control
+            to the PreviewServer's `preview_func` (where `ioloop.start()` was
+            issued).
+        """
         def get(self):
-            print "Issuing HTTP server halt ..."
             iol.stop()
-    return APIHandler
+    return NextOpHandler
 
 
 def mk_AppSocketHandler(iol):
@@ -46,7 +49,6 @@ def mk_AppSocketHandler(iol):
 
         def send_packet(self, p=proto.Packet()):
             msg = p.SerializeToString()
-            print msg
             self.write_message(msg)
 
     return AppSocketHandler
@@ -58,9 +60,9 @@ class PreviewServer():
         self.port = port
         self.iol  = tornado.ioloop.IOLoop.instance()
         self.app  = tornado.web.Application([
-            (r"/api",  mk_APIHandler(self.iol)),
-            (r"/ws",   mk_AppSocketHandler(self.iol)),
-            (r"/(.*)", tornado.web.StaticFileHandler, static_opts),
+            (r"/api/next_op",  mk_NextOpHandler(self.iol)),
+            (r"/ws",           mk_AppSocketHandler(self.iol)),
+            (r"/(.*)",         tornado.web.StaticFileHandler, static_opts),
         ])
 
         # Keep track of random interesting stats.
