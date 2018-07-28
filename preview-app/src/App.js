@@ -4,7 +4,7 @@ import axios              from "axios";
 
 import "./App.css";
 import Websocket from "./components/Websocket";
-
+import proto     from "./proto/preview_pb";
 
 class App extends Component {
 
@@ -14,14 +14,30 @@ class App extends Component {
     this.onSocketMessage = this.onSocketMessage.bind(this);
     this.toolbarNext     = this.toolbarNext.bind(this);
 
+    this.debug = {}
+
     this.state = {
       message: "Loading last argument(s) ...",
+      error:   "",
     };
   }
 
   onSocketMessage(e) {
     const msg = e.data || "Error";
-    this.setState({ message: msg });
+    let buf = new TextEncoder().encode(msg)
+    let pkt = proto.Packet.deserializeBinary(buf);
+    console.log(msg);
+    console.log(buf);
+    console.log(pkt.toObject())
+    this.debug = pkt;
+
+    if (pkt.hasMessage()) {
+      this.setState({ message: pkt.getMessage() });
+    } else if (pkt.hasError()) {
+      this.setState({ error: pkt.getError() });
+    } else {
+      console.log("unhandled proto packet", pkt);
+    }
   }
 
   toolbarNext() {

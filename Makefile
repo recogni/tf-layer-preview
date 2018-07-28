@@ -11,4 +11,16 @@ app:
 serve:
 	(cd preview-app && npm run-script start)
 
-.PHONY: init test
+proto-build:
+	(cd proto && make)
+
+proto-install: proto-build
+	(cd proto && make install)
+
+
+clean:
+	(cd proto && make clean)
+
+install: proto-install
+
+.PHONY: test lint serve install

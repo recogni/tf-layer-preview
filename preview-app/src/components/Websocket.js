@@ -18,6 +18,7 @@ class Websocket extends React.Component {
     constructor(props) {
         super(props);
         this.socket = new WebSocket(this.props.url);
+        this.socket.binaryType = "arraybuffer";
     }
 
     componentDidMount() {
