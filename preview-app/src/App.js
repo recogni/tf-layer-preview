@@ -1,12 +1,12 @@
 // 3rd party imports.
 import React, {Component} from "react";
-import {FaArrowRight}     from "react-icons/lib/fa";
-import axios              from "axios";
+import {FaArrowRight, FaBan} from "react-icons/lib/fa";
+import axios from "axios";
 
 // Application imports.
 import "./App.css";
 import Websocket from "./components/Websocket";
-import proto     from "./proto/preview_pb";
+import proto from "./proto/preview_pb";
 
 // App class definition.
 class App extends Component {
@@ -16,11 +16,30 @@ class App extends Component {
 
     this.onSocketMessage = this.onSocketMessage.bind(this);
     this.toolbarNext     = this.toolbarNext.bind(this);
+    this.clearLogs       = this.clearLogs.bind(this);
 
     this.state = {
-      message: "Loading last argument(s) ...",
+      logs:    [],
       error:   "",
     };
+  }
+
+  // Logging "framework".
+  _log(msg, type) {
+    const nl  = {message: msg, type: type};
+    this.setState({ logs: [...this.state.logs, nl] })
+  }
+  log(msg) {
+    this._log(msg, "status");
+  }
+  warn(msg) {
+    this._log(msg, "warning");
+  }
+  error(msg) {
+    this._log(msg, "error")
+  }
+  clearLogs() {
+    this.setState({ logs: [] });
   }
 
   onSocketMessage(e) {
@@ -28,33 +47,43 @@ class App extends Component {
     let pkt = proto.Packet.deserializeBinary(buf);
 
     if (pkt.hasMessage()) {
-      this.setState({ message: pkt.getMessage() });
+      this.log(pkt.getMessage())
     } else if (pkt.hasError()) {
-      this.setState({ error: pkt.getError() });
+      this.error(pkt.getMessage())
     } else {
       console.log("unhandled proto packet", pkt);
     }
   }
 
   toolbarNext() {
-    axios.get("http://localhost:18899/api");
+    axios.get("http://localhost:18899/api/next_op");
   }
 
   render() {
+    // Create the list of divs that will make up the logs.
+    const logs = this.state.logs.map((item, i) => {
+      return <div className="App-log-line">{item.message}</div>
+    });
+
     return (
       <div className="App">
         <Websocket
           onMessage={this.onSocketMessage}
           url="ws://localhost:18899/ws">
         </Websocket>
+
         <header className="App-header">
           <h1 className="App-title">Tensorflow layer preview</h1>
         </header>
+
         <div className="App-toolbar">
-          <FaArrowRight size={30} onClick={this.toolbarNext}/>
+          <FaBan size={30} onClick={this.clearLogs} />
+          <FaArrowRight size={30} onClick={this.toolbarNext} />
         </div>
-        <hr />
-        <pre>{this.state.message}</pre>
+
+        <div className="App-logs">
+          { logs }
+        </div>
       </div>
     );
   }
