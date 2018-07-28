@@ -49,7 +49,7 @@ def mk_AppSocketHandler(iol):
 
         def send_packet(self, p=proto.Packet()):
             msg = p.SerializeToString()
-            self.write_message(msg)
+            self.write_message(msg, binary=True)
 
     return AppSocketHandler
 

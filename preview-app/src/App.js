@@ -43,7 +43,7 @@ class App extends Component {
   }
 
   onSocketMessage(e) {
-    let buf = new TextEncoder().encode(e.data)
+    const buf = new Uint8Array(e.data);
     let pkt = proto.Packet.deserializeBinary(buf);
 
     if (pkt.hasMessage()) {

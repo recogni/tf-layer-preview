@@ -19,9 +19,10 @@ def main():
     dataset = dataset.batch(2)
     iter = dataset.make_one_shot_iterator()
 
-    x, y = iter.get_next()
-    x, y = ps.op([x, y], (tf.string, tf.int64))
-    op   = tf.Print(x, [x, y], "X,Y =")
+    x, y    = iter.get_next()
+    z       = tf.constant(10.0, shape=[10, 10], dtype=tf.float32)
+    x, y, z = ps.op([x, y, z], (tf.string, tf.int64, tf.float32))
+    op      = tf.Print(x, [x, y, z], "X,Y,Z =")
 
     # Run the session.
     with tf.Session() as sess:
