@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
 import tensorflow as tf
-from preview import PreviewServer
-
+from tf_layer_preview import PreviewServer
 
 def generator():
     for i in range(1, 100, 1):

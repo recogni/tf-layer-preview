@@ -21,6 +21,9 @@ proto-install: proto-build
 clean:
 	(cd proto && make clean)
 
-install: proto-install
+lib-install:
+	sudo python setup.py install
+
+install: lib-install proto-install
 
 .PHONY: test lint serve install
