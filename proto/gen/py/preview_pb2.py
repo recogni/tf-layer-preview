@@ -19,11 +19,49 @@ DESCRIPTOR = _descriptor.FileDescriptor(
   name='preview.proto',
   package='preview',
   syntax='proto3',
-  serialized_pb=_b('\n\rpreview.proto\x12\x07preview\"6\n\x06Packet\x12\x11\n\x07message\x18\x01 \x01(\tH\x00\x12\x0f\n\x05\x65rror\x18\x02 \x01(\tH\x00\x42\x08\n\x06packetb\x06proto3')
+  serialized_pb=_b('\n\rpreview.proto\x12\x07preview\"\'\n\tOpPreview\x12\x0c\n\x04name\x18\x01 \x01(\t\x12\x0c\n\x04\x64\x61ta\x18\x02 \x01(\t\"]\n\x06Packet\x12\x11\n\x07message\x18\x01 \x01(\tH\x00\x12\x0f\n\x05\x65rror\x18\x02 \x01(\tH\x00\x12%\n\x07preview\x18\x03 \x01(\x0b\x32\x12.preview.OpPreviewH\x00\x42\x08\n\x06packetb\x06proto3')
 )
 _sym_db.RegisterFileDescriptor(DESCRIPTOR)
 
 
+
+
+_OPPREVIEW = _descriptor.Descriptor(
+  name='OpPreview',
+  full_name='preview.OpPreview',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='name', full_name='preview.OpPreview.name', index=0,
+      number=1, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='data', full_name='preview.OpPreview.data', index=1,
+      number=2, type=9, cpp_type=9, label=1,
+      has_default_value=False, default_value=_b("").decode('utf-8'),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  syntax='proto3',
+  extension_ranges=[],
+  oneofs=[
+  ],
+  serialized_start=26,
+  serialized_end=65,
+)
 
 
 _PACKET = _descriptor.Descriptor(
@@ -47,6 +85,13 @@ _PACKET = _descriptor.Descriptor(
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
+    _descriptor.FieldDescriptor(
+      name='preview', full_name='preview.Packet.preview', index=2,
+      number=3, type=11, cpp_type=10, label=1,
+      has_default_value=False, default_value=None,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
   ],
   extensions=[
   ],
@@ -62,17 +107,29 @@ _PACKET = _descriptor.Descriptor(
       name='packet', full_name='preview.Packet.packet',
       index=0, containing_type=None, fields=[]),
   ],
-  serialized_start=26,
-  serialized_end=80,
+  serialized_start=67,
+  serialized_end=160,
 )
 
+_PACKET.fields_by_name['preview'].message_type = _OPPREVIEW
 _PACKET.oneofs_by_name['packet'].fields.append(
   _PACKET.fields_by_name['message'])
 _PACKET.fields_by_name['message'].containing_oneof = _PACKET.oneofs_by_name['packet']
 _PACKET.oneofs_by_name['packet'].fields.append(
   _PACKET.fields_by_name['error'])
 _PACKET.fields_by_name['error'].containing_oneof = _PACKET.oneofs_by_name['packet']
+_PACKET.oneofs_by_name['packet'].fields.append(
+  _PACKET.fields_by_name['preview'])
+_PACKET.fields_by_name['preview'].containing_oneof = _PACKET.oneofs_by_name['packet']
+DESCRIPTOR.message_types_by_name['OpPreview'] = _OPPREVIEW
 DESCRIPTOR.message_types_by_name['Packet'] = _PACKET
+
+OpPreview = _reflection.GeneratedProtocolMessageType('OpPreview', (_message.Message,), dict(
+  DESCRIPTOR = _OPPREVIEW,
+  __module__ = 'preview_pb2'
+  # @@protoc_insertion_point(class_scope:preview.OpPreview)
+  ))
+_sym_db.RegisterMessage(OpPreview)
 
 Packet = _reflection.GeneratedProtocolMessageType('Packet', (_message.Message,), dict(
   DESCRIPTOR = _PACKET,

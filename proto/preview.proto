@@ -1,9 +1,20 @@
 syntax = "proto3";
 package preview;
 
+// OpPreview encapsulates a single graph operation and all its inputs.
+// TODO: What about outputs?
+message OpPreview {
+    string name = 1;
+    string data = 2;
+}
+
+// Packet is an encapsulation of all tf-layer-preview message types where
+// exactly one field in the `packet` will be set (`oneof`).  There might be
+// other application specific data outside the `oneof`.
 message Packet {
     oneof packet {
-        string message = 1;
-        string error   = 2;
+        string    message = 1;
+        string    error   = 2;
+        OpPreview preview = 3;
     }
 }
