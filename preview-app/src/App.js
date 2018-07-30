@@ -21,6 +21,7 @@ class App extends Component {
     this.state = {
       logs:    [],
       error:   "",
+      preview: undefined,
     };
   }
 
@@ -42,6 +43,7 @@ class App extends Component {
     this.setState({ logs: [] });
   }
 
+  // Websocket interop.
   onSocketMessage(e) {
     const buf = new Uint8Array(e.data);
     let pkt = proto.Packet.deserializeBinary(buf);
@@ -53,15 +55,30 @@ class App extends Component {
     } else if (pkt.hasPreview()) {
       // TODO: Turn this into the current preview vs using the message list.
       let p = pkt.getPreview();
-      this.log(p.getName())
-      this.log(p.getData())
+      this.setState({ preview: p });
     } else {
       console.log("unhandled proto packet", pkt);
     }
   }
 
+  // UI interaction.
   toolbarNext() {
     axios.get("http://localhost:18899/api/next_op");
+  }
+
+  // App render.
+  buildPreview() {
+    const p = this.state.preview;
+    if (p == undefined) return;
+
+    const name = p.getName();
+    const data = p.getData();
+    return (
+      <div>
+        <h4>{ name }</h4>
+        <div>{ data }</div>
+      </div>
+    )
   }
 
   render() {
@@ -69,6 +86,9 @@ class App extends Component {
     const logs = this.state.logs.map((item, i) => {
       return <div className="App-log-line">{item.message}</div>
     });
+
+    // TODO: Optimize this w/ a dumb cache.
+    const preview = this.buildPreview();
 
     return (
       <div className="App">
@@ -84,6 +104,10 @@ class App extends Component {
         <div className="App-toolbar">
           <FaBan size={30} onClick={this.clearLogs} />
           <FaArrowRight size={30} onClick={this.toolbarNext} />
+        </div>
+
+        <div className="App-preview">
+          { preview }
         </div>
 
         <div className="App-logs">
