@@ -55,6 +55,8 @@ class App extends Component {
     } else if (pkt.hasPreview()) {
       // TODO: Turn this into the current preview vs using the message list.
       let p = pkt.getPreview();
+      console.log(p);
+      console.log(p.toObject());
       this.setState({ preview: p });
     } else {
       console.log("unhandled proto packet", pkt);

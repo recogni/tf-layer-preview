@@ -11,6 +11,7 @@ var goog = jspb;
 var global = Function('return this')();
 
 goog.exportSymbol('proto.preview.OpPreview', null, global);
+goog.exportSymbol('proto.preview.OpTensor', null, global);
 goog.exportSymbol('proto.preview.Packet', null, global);
 
 /**
@@ -23,13 +24,335 @@ goog.exportSymbol('proto.preview.Packet', null, global);
  * @extends {jspb.Message}
  * @constructor
  */
+proto.preview.OpTensor = function(opt_data) {
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.preview.OpTensor.repeatedFields_, null);
+};
+goog.inherits(proto.preview.OpTensor, jspb.Message);
+if (goog.DEBUG && !COMPILED) {
+  proto.preview.OpTensor.displayName = 'proto.preview.OpTensor';
+}
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.preview.OpTensor.repeatedFields_ = [3,5];
+
+
+
+if (jspb.Message.GENERATE_TO_OBJECT) {
+/**
+ * Creates an object representation of this proto suitable for use in Soy templates.
+ * Field names that are reserved in JavaScript and will be renamed to pb_name.
+ * To access a reserved field use, foo.pb_<name>, eg, foo.pb_default.
+ * For the list of reserved names please see:
+ *     com.google.apps.jspb.JsClassTemplate.JS_RESERVED_WORDS.
+ * @param {boolean=} opt_includeInstance Whether to include the JSPB instance
+ *     for transitional soy proto support: http://goto/soy-param-migration
+ * @return {!Object}
+ */
+proto.preview.OpTensor.prototype.toObject = function(opt_includeInstance) {
+  return proto.preview.OpTensor.toObject(opt_includeInstance, this);
+};
+
+
+/**
+ * Static version of the {@see toObject} method.
+ * @param {boolean|undefined} includeInstance Whether to include the JSPB
+ *     instance for transitional soy proto support:
+ *     http://goto/soy-param-migration
+ * @param {!proto.preview.OpTensor} msg The msg instance to transform.
+ * @return {!Object}
+ */
+proto.preview.OpTensor.toObject = function(includeInstance, msg) {
+  var f, obj = {
+    name: jspb.Message.getFieldWithDefault(msg, 1, ""),
+    type: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    shapeList: jspb.Message.getField(msg, 3),
+    rank: jspb.Message.getFieldWithDefault(msg, 4, 0),
+    dataList: msg.getDataList_asB64()
+  };
+
+  if (includeInstance) {
+    obj.$jspbMessageInstance = msg;
+  }
+  return obj;
+};
+}
+
+
+/**
+ * Deserializes binary data (in protobuf wire format).
+ * @param {jspb.ByteSource} bytes The bytes to deserialize.
+ * @return {!proto.preview.OpTensor}
+ */
+proto.preview.OpTensor.deserializeBinary = function(bytes) {
+  var reader = new jspb.BinaryReader(bytes);
+  var msg = new proto.preview.OpTensor;
+  return proto.preview.OpTensor.deserializeBinaryFromReader(msg, reader);
+};
+
+
+/**
+ * Deserializes binary data (in protobuf wire format) from the
+ * given reader into the given message object.
+ * @param {!proto.preview.OpTensor} msg The message object to deserialize into.
+ * @param {!jspb.BinaryReader} reader The BinaryReader to use.
+ * @return {!proto.preview.OpTensor}
+ */
+proto.preview.OpTensor.deserializeBinaryFromReader = function(msg, reader) {
+  while (reader.nextField()) {
+    if (reader.isEndGroup()) {
+      break;
+    }
+    var field = reader.getFieldNumber();
+    switch (field) {
+    case 1:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setName(value);
+      break;
+    case 2:
+      var value = /** @type {string} */ (reader.readString());
+      msg.setType(value);
+      break;
+    case 3:
+      var value = /** @type {!Array.<number>} */ (reader.readPackedInt32());
+      msg.setShapeList(value);
+      break;
+    case 4:
+      var value = /** @type {number} */ (reader.readInt32());
+      msg.setRank(value);
+      break;
+    case 5:
+      var value = /** @type {!Uint8Array} */ (reader.readBytes());
+      msg.addData(value);
+      break;
+    default:
+      reader.skipField();
+      break;
+    }
+  }
+  return msg;
+};
+
+
+/**
+ * Serializes the message to binary data (in protobuf wire format).
+ * @return {!Uint8Array}
+ */
+proto.preview.OpTensor.prototype.serializeBinary = function() {
+  var writer = new jspb.BinaryWriter();
+  proto.preview.OpTensor.serializeBinaryToWriter(this, writer);
+  return writer.getResultBuffer();
+};
+
+
+/**
+ * Serializes the given message to binary data (in protobuf wire
+ * format), writing to the given BinaryWriter.
+ * @param {!proto.preview.OpTensor} message
+ * @param {!jspb.BinaryWriter} writer
+ */
+proto.preview.OpTensor.serializeBinaryToWriter = function(message, writer) {
+  var f = undefined;
+  f = message.getName();
+  if (f.length > 0) {
+    writer.writeString(
+      1,
+      f
+    );
+  }
+  f = message.getType();
+  if (f.length > 0) {
+    writer.writeString(
+      2,
+      f
+    );
+  }
+  f = message.getShapeList();
+  if (f.length > 0) {
+    writer.writePackedInt32(
+      3,
+      f
+    );
+  }
+  f = message.getRank();
+  if (f !== 0) {
+    writer.writeInt32(
+      4,
+      f
+    );
+  }
+  f = message.getDataList_asU8();
+  if (f.length > 0) {
+    writer.writeRepeatedBytes(
+      5,
+      f
+    );
+  }
+};
+
+
+/**
+ * optional string name = 1;
+ * @return {string}
+ */
+proto.preview.OpTensor.prototype.getName = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 1, ""));
+};
+
+
+/** @param {string} value */
+proto.preview.OpTensor.prototype.setName = function(value) {
+  jspb.Message.setField(this, 1, value);
+};
+
+
+/**
+ * optional string type = 2;
+ * @return {string}
+ */
+proto.preview.OpTensor.prototype.getType = function() {
+  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+};
+
+
+/** @param {string} value */
+proto.preview.OpTensor.prototype.setType = function(value) {
+  jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * repeated int32 shape = 3;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * @return {!Array.<number>}
+ */
+proto.preview.OpTensor.prototype.getShapeList = function() {
+  return /** @type {!Array.<number>} */ (jspb.Message.getField(this, 3));
+};
+
+
+/** @param {!Array.<number>} value */
+proto.preview.OpTensor.prototype.setShapeList = function(value) {
+  jspb.Message.setField(this, 3, value || []);
+};
+
+
+/**
+ * @param {!number} value
+ * @param {number=} opt_index
+ */
+proto.preview.OpTensor.prototype.addShape = function(value, opt_index) {
+  jspb.Message.addToRepeatedField(this, 3, value, opt_index);
+};
+
+
+proto.preview.OpTensor.prototype.clearShapeList = function() {
+  this.setShapeList([]);
+};
+
+
+/**
+ * optional int32 rank = 4;
+ * @return {number}
+ */
+proto.preview.OpTensor.prototype.getRank = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 4, 0));
+};
+
+
+/** @param {number} value */
+proto.preview.OpTensor.prototype.setRank = function(value) {
+  jspb.Message.setField(this, 4, value);
+};
+
+
+/**
+ * repeated bytes data = 5;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * @return {!(Array<!Uint8Array>|Array<string>)}
+ */
+proto.preview.OpTensor.prototype.getDataList = function() {
+  return /** @type {!(Array<!Uint8Array>|Array<string>)} */ (jspb.Message.getField(this, 5));
+};
+
+
+/**
+ * repeated bytes data = 5;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * This is a type-conversion wrapper around `getDataList()`
+ * @return {!Array.<string>}
+ */
+proto.preview.OpTensor.prototype.getDataList_asB64 = function() {
+  return /** @type {!Array.<string>} */ (jspb.Message.bytesListAsB64(
+      this.getDataList()));
+};
+
+
+/**
+ * repeated bytes data = 5;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * Note that Uint8Array is not supported on all browsers.
+ * @see http://caniuse.com/Uint8Array
+ * This is a type-conversion wrapper around `getDataList()`
+ * @return {!Array.<!Uint8Array>}
+ */
+proto.preview.OpTensor.prototype.getDataList_asU8 = function() {
+  return /** @type {!Array.<!Uint8Array>} */ (jspb.Message.bytesListAsU8(
+      this.getDataList()));
+};
+
+
+/** @param {!(Array<!Uint8Array>|Array<string>)} value */
+proto.preview.OpTensor.prototype.setDataList = function(value) {
+  jspb.Message.setField(this, 5, value || []);
+};
+
+
+/**
+ * @param {!(string|Uint8Array)} value
+ * @param {number=} opt_index
+ */
+proto.preview.OpTensor.prototype.addData = function(value, opt_index) {
+  jspb.Message.addToRepeatedField(this, 5, value, opt_index);
+};
+
+
+proto.preview.OpTensor.prototype.clearDataList = function() {
+  this.setDataList([]);
+};
+
+
+
+/**
+ * Generated by JsPbCodeGenerator.
+ * @param {Array=} opt_data Optional initial data array, typically from a
+ * server response, or constructed directly in Javascript. The array is used
+ * in place and becomes part of the constructed object. It is not cloned.
+ * If no data is provided, the constructed object will be empty, but still
+ * valid.
+ * @extends {jspb.Message}
+ * @constructor
+ */
 proto.preview.OpPreview = function(opt_data) {
-  jspb.Message.initialize(this, opt_data, 0, -1, null, null);
+  jspb.Message.initialize(this, opt_data, 0, -1, proto.preview.OpPreview.repeatedFields_, null);
 };
 goog.inherits(proto.preview.OpPreview, jspb.Message);
 if (goog.DEBUG && !COMPILED) {
   proto.preview.OpPreview.displayName = 'proto.preview.OpPreview';
 }
+/**
+ * List of repeated fields within this message type.
+ * @private {!Array<number>}
+ * @const
+ */
+proto.preview.OpPreview.repeatedFields_ = [3];
+
 
 
 if (jspb.Message.GENERATE_TO_OBJECT) {
@@ -59,7 +382,9 @@ proto.preview.OpPreview.prototype.toObject = function(opt_includeInstance) {
 proto.preview.OpPreview.toObject = function(includeInstance, msg) {
   var f, obj = {
     name: jspb.Message.getFieldWithDefault(msg, 1, ""),
-    data: jspb.Message.getFieldWithDefault(msg, 2, "")
+    data: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    tensorsList: jspb.Message.toObjectList(msg.getTensorsList(),
+    proto.preview.OpTensor.toObject, includeInstance)
   };
 
   if (includeInstance) {
@@ -104,6 +429,11 @@ proto.preview.OpPreview.deserializeBinaryFromReader = function(msg, reader) {
       var value = /** @type {string} */ (reader.readString());
       msg.setData(value);
       break;
+    case 3:
+      var value = new proto.preview.OpTensor;
+      reader.readMessage(value,proto.preview.OpTensor.deserializeBinaryFromReader);
+      msg.addTensors(value);
+      break;
     default:
       reader.skipField();
       break;
@@ -146,6 +476,14 @@ proto.preview.OpPreview.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
+  f = message.getTensorsList();
+  if (f.length > 0) {
+    writer.writeRepeatedMessage(
+      3,
+      f,
+      proto.preview.OpTensor.serializeBinaryToWriter
+    );
+  }
 };
 
 
@@ -176,6 +514,39 @@ proto.preview.OpPreview.prototype.getData = function() {
 /** @param {string} value */
 proto.preview.OpPreview.prototype.setData = function(value) {
   jspb.Message.setField(this, 2, value);
+};
+
+
+/**
+ * repeated OpTensor tensors = 3;
+ * If you change this array by adding, removing or replacing elements, or if you
+ * replace the array itself, then you must call the setter to update it.
+ * @return {!Array.<!proto.preview.OpTensor>}
+ */
+proto.preview.OpPreview.prototype.getTensorsList = function() {
+  return /** @type{!Array.<!proto.preview.OpTensor>} */ (
+    jspb.Message.getRepeatedWrapperField(this, proto.preview.OpTensor, 3));
+};
+
+
+/** @param {!Array.<!proto.preview.OpTensor>} value */
+proto.preview.OpPreview.prototype.setTensorsList = function(value) {
+  jspb.Message.setRepeatedWrapperField(this, 3, value);
+};
+
+
+/**
+ * @param {!proto.preview.OpTensor=} opt_value
+ * @param {number=} opt_index
+ * @return {!proto.preview.OpTensor}
+ */
+proto.preview.OpPreview.prototype.addTensors = function(opt_value, opt_index) {
+  return jspb.Message.addToRepeatedWrapperField(this, 3, opt_value, proto.preview.OpTensor, opt_index);
+};
+
+
+proto.preview.OpPreview.prototype.clearTensorsList = function() {
+  this.setTensorsList([]);
 };
 
 

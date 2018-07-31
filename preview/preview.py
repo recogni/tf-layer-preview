@@ -83,33 +83,74 @@ class PreviewServer():
         """
         return "layer-preview-%d" % (self.op_count)
 
-    def build_preview(self, name, *tensors):
-        """ Given a name and a list of tensors, build a `preview` proto of the
-            data for visualization by the front-end.
+    def inject_pydef_time_data(self, op_preview, name, *tf_tensors):
+        """ Inject definition time data from the tensor list specified in
+            `tf_tensors`.
         """
-        msg = ""
-        for t in tensors:
-            msg += "%s -- %s\n" % (str(t), type(t))
+        op_preview.name = name
+        op_preview.data = "Tensor preview for %s" % (name)
+        for t in tf_tensors:
+            tp = proto.OpTensor()
+            tp.name = t.name
+            tp.type = str(t.dtype)
+            s = t._shape_as_list()
+            if s:
+                tp.shape.extend(s)
+            r = t._rank()
+            if r:
+                tp.rank = r
+            op_preview.tensors.extend([tp])
+        return op_preview
 
-        preview_proto = proto.OpPreview()
-        preview_proto.name = name
-        preview_proto.data = msg
-        return preview_proto
+    def inject_graph_time_data(self, op_preview, name, *np_tensors):
+        """ Given a name and a list of numpy tensors, build a `preview` proto
+            of the data for visualization by the front-end.
 
-    def get_preview_func(self, name):
+            The `op_preview` refers to the protobuf of the `OpPreview` proto.
+            This is input so that we can preserve the definition-time data
+            known before graph execution time.
+        """
+        # TODO: Handle single batch types
+        # TODO: Data per tensor batch into OpTensor
+        # TODO: for t in np_tensors:
+            # TODO: Inject tensor value here.
+        return op_preview
+
+    def get_preview_func(self, name, *tf_tensors):
         """ Wrapper for the py_func so that we have the ability to pass
             custom arguments like the layer name etc above.
+
+            NOTE: The `*tf_tensors` passed above are __DIFFERENT__ than the
+                  ones passed into the py_func below.  The former refers to
+                  the actual tensorflow tensors defined at graph definition
+                  time, while the latter refers to the converted numpy tensors
+                  which show up at graph execution time.
         """
-        def py_func(*tensors):
+
+        # Build a preview packet for each set of ops that need to be analyzed.
+        # This is filled out with any tensorflow specific tensor data that
+        # will be unknown at py_func exec time. By defining the `pp` variable
+        # outside the py_func, it can be re-used each time `this` layer / op
+        # is analyzed.
+        #
+        # NOTE: Is it currently ok to update the graph_time_data without
+        #       clearing the protobuf since the data is orthogonal.
+        pp = proto.OpPreview()
+        pp = self.inject_pydef_time_data(name, *tf_tensors)
+
+        def py_func(*np_tensors):
             """ PyFunc that executes at graph time and halts the graph so that
                 we can halt the graph and inspect variables.  The `*args` here
                 is the list of tensor inputs which are typically passed to a
                 py_func (list of tensors), since we do not know how many might
                 be passed into the func, we use a variadic argument above.
             """
+
+            # TODO: Returning pp from each of the injects might not be needed.
             global app_packet
             app_packet.Clear()
-            app_packet.preview.CopyFrom(self.build_preview(name, *tensors))
+            pp = self.inject_graph_time_data(name, pp, *np_tensors)
+            app_packet.preview.CopyFrom(pp)
 
             # If there are no sockets currently connected, fire one up!
             global app_sockets
@@ -124,11 +165,11 @@ class PreviewServer():
             return tensors          # fall-through
         return py_func
 
-    def profile_ops(self, *ops, **kwargs):
+    def profile_ops(self, *tf_tensors, **kwargs):
         """ External API for the preview server.
 
-            `*ops` is a list of tensor flow ops which will be analyzed when
-            the `py_func` above halts the tf graph (at run-time).
+            `*tf_tensors` is a list of tensor flow ops which will be analyzed
+            when the `py_func` above halts the tf graph (at run-time).
 
             Possible (optional) named arguments include:
             `name` - Name of the layer, the default value is the op_count.
@@ -138,5 +179,6 @@ class PreviewServer():
             inspect-and-pass-through method.
         """
         name   = kwargs.get("name", self.new_layer_name())
-        dtypes = [op.dtype for op in ops]
-        return tf.py_func(self.get_preview_func(name), ops, dtypes)
+        dtypes = [op.dtype for op in tf_tensors]
+        py_fn  = self.get_preview_func(name, *tf_tensors)
+        return tf.py_func(py_fn, tf_tensors, dtypes)

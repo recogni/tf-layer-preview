@@ -1,11 +1,28 @@
 syntax = "proto3";
 package preview;
 
+/*
+ *  Input format typically looks like:
+ *  ops = [t0, t1, t2]
+ *  Where t0 represents a tensor of length `batch size`.
+ */
+
+// OpTensor represents a single tensor encapsulation which includes
+// the tensor's shape, rank and length.
+message OpTensor {
+    string         name  = 1;
+    string         type  = 2;    // TODO: These should be supported proto enums
+    repeated int32 shape = 3;
+    int32          rank  = 4;
+    repeated bytes data  = 5;
+}
+
 // OpPreview encapsulates a single graph operation and all its inputs.
 // TODO: What about outputs?
 message OpPreview {
-    string name = 1;
-    string data = 2;
+    string            name    = 1;
+    string            data    = 2;  // TODO: Nuke data in favor of tensors
+    repeated OpTensor tensors = 3;
 }
 
 // Packet is an encapsulation of all tf-layer-preview message types where
