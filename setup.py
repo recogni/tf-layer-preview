@@ -1,6 +1,7 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(name="tf_layer_preview",
+setup(
+    name="tf_layer_preview",
     version="0.0.2",
     description="Tensorflow layer previewer",
     url="https://github.com/recogni/tf-layer-preview",
