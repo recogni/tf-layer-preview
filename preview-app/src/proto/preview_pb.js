@@ -36,7 +36,7 @@ if (goog.DEBUG && !COMPILED) {
  * @private {!Array<number>}
  * @const
  */
-proto.preview.OpTensor.repeatedFields_ = [3,5];
+proto.preview.OpTensor.repeatedFields_ = [3];
 
 
 
@@ -70,7 +70,7 @@ proto.preview.OpTensor.toObject = function(includeInstance, msg) {
     type: jspb.Message.getFieldWithDefault(msg, 2, ""),
     shapeList: jspb.Message.getField(msg, 3),
     rank: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    dataList: msg.getDataList_asB64()
+    data: msg.getData_asB64()
   };
 
   if (includeInstance) {
@@ -125,7 +125,7 @@ proto.preview.OpTensor.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 5:
       var value = /** @type {!Uint8Array} */ (reader.readBytes());
-      msg.addData(value);
+      msg.setData(value);
       break;
     default:
       reader.skipField();
@@ -183,9 +183,9 @@ proto.preview.OpTensor.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getDataList_asU8();
+  f = message.getData_asU8();
   if (f.length > 0) {
-    writer.writeRepeatedBytes(
+    writer.writeBytes(
       5,
       f
     );
@@ -270,61 +270,41 @@ proto.preview.OpTensor.prototype.setRank = function(value) {
 
 
 /**
- * repeated bytes data = 5;
- * If you change this array by adding, removing or replacing elements, or if you
- * replace the array itself, then you must call the setter to update it.
- * @return {!(Array<!Uint8Array>|Array<string>)}
+ * optional bytes data = 5;
+ * @return {!(string|Uint8Array)}
  */
-proto.preview.OpTensor.prototype.getDataList = function() {
-  return /** @type {!(Array<!Uint8Array>|Array<string>)} */ (jspb.Message.getField(this, 5));
+proto.preview.OpTensor.prototype.getData = function() {
+  return /** @type {!(string|Uint8Array)} */ (jspb.Message.getFieldWithDefault(this, 5, ""));
 };
 
 
 /**
- * repeated bytes data = 5;
- * If you change this array by adding, removing or replacing elements, or if you
- * replace the array itself, then you must call the setter to update it.
- * This is a type-conversion wrapper around `getDataList()`
- * @return {!Array.<string>}
+ * optional bytes data = 5;
+ * This is a type-conversion wrapper around `getData()`
+ * @return {string}
  */
-proto.preview.OpTensor.prototype.getDataList_asB64 = function() {
-  return /** @type {!Array.<string>} */ (jspb.Message.bytesListAsB64(
-      this.getDataList()));
+proto.preview.OpTensor.prototype.getData_asB64 = function() {
+  return /** @type {string} */ (jspb.Message.bytesAsB64(
+      this.getData()));
 };
 
 
 /**
- * repeated bytes data = 5;
- * If you change this array by adding, removing or replacing elements, or if you
- * replace the array itself, then you must call the setter to update it.
+ * optional bytes data = 5;
  * Note that Uint8Array is not supported on all browsers.
  * @see http://caniuse.com/Uint8Array
- * This is a type-conversion wrapper around `getDataList()`
- * @return {!Array.<!Uint8Array>}
+ * This is a type-conversion wrapper around `getData()`
+ * @return {!Uint8Array}
  */
-proto.preview.OpTensor.prototype.getDataList_asU8 = function() {
-  return /** @type {!Array.<!Uint8Array>} */ (jspb.Message.bytesListAsU8(
-      this.getDataList()));
+proto.preview.OpTensor.prototype.getData_asU8 = function() {
+  return /** @type {!Uint8Array} */ (jspb.Message.bytesAsU8(
+      this.getData()));
 };
 
 
-/** @param {!(Array<!Uint8Array>|Array<string>)} value */
-proto.preview.OpTensor.prototype.setDataList = function(value) {
-  jspb.Message.setField(this, 5, value || []);
-};
-
-
-/**
- * @param {!(string|Uint8Array)} value
- * @param {number=} opt_index
- */
-proto.preview.OpTensor.prototype.addData = function(value, opt_index) {
-  jspb.Message.addToRepeatedField(this, 5, value, opt_index);
-};
-
-
-proto.preview.OpTensor.prototype.clearDataList = function() {
-  this.setDataList([]);
+/** @param {!(string|Uint8Array)} value */
+proto.preview.OpTensor.prototype.setData = function(value) {
+  jspb.Message.setField(this, 5, value);
 };
 
 

@@ -34,6 +34,9 @@ def mk_AppSocketHandler(iol):
             and all connected sockets.  Use the `send_packet` method to send
             application specific protos to the front-end.
         """
+        def check_origin(self, origin):
+            return True
+
         def open(self):
             global app_sockets
             app_sockets[self] = self
@@ -83,12 +86,10 @@ class PreviewServer():
         """
         return "layer-preview-%d" % (self.op_count)
 
-    def inject_pydef_time_data(self, op_preview, name, *tf_tensors):
+    def inject_pydef_time_data(self, op_preview, *tf_tensors):
         """ Inject definition time data from the tensor list specified in
             `tf_tensors`.
         """
-        op_preview.name = name
-        op_preview.data = "Tensor preview for %s" % (name)
         for t in tf_tensors:
             tp = proto.OpTensor()
             tp.name = t.name
@@ -102,7 +103,7 @@ class PreviewServer():
             op_preview.tensors.extend([tp])
         return op_preview
 
-    def inject_graph_time_data(self, op_preview, name, *np_tensors):
+    def inject_graph_time_data(self, op_preview, *np_tensors):
         """ Given a name and a list of numpy tensors, build a `preview` proto
             of the data for visualization by the front-end.
 
@@ -111,9 +112,15 @@ class PreviewServer():
             known before graph execution time.
         """
         # TODO: Handle single batch types
-        # TODO: Data per tensor batch into OpTensor
-        # TODO: for t in np_tensors:
-            # TODO: Inject tensor value here.
+        msg = ""
+        for i, t in enumerate(np_tensors):
+            print "New tensor: ", t
+            print "  Type:  ", type(t)
+            print "  Shape: ", t.shape
+            print "  Size:  ", t.size
+            msg += str(type(t)) + "\n" + str(t) + "\n" + "-" * 40 + "\n"
+            op_preview.tensors[i].data = t.tobytes()
+        op_preview.data = msg
         return op_preview
 
     def get_preview_func(self, name, *tf_tensors):
@@ -136,7 +143,9 @@ class PreviewServer():
         # NOTE: Is it currently ok to update the graph_time_data without
         #       clearing the protobuf since the data is orthogonal.
         pp = proto.OpPreview()
-        pp = self.inject_pydef_time_data(name, *tf_tensors)
+        pp.name = name
+        pp.data = "Tensor preview for %s" % (name)
+        self.inject_pydef_time_data(pp, *tf_tensors)
 
         def py_func(*np_tensors):
             """ PyFunc that executes at graph time and halts the graph so that
@@ -149,7 +158,7 @@ class PreviewServer():
             # TODO: Returning pp from each of the injects might not be needed.
             global app_packet
             app_packet.Clear()
-            pp = self.inject_graph_time_data(name, pp, *np_tensors)
+            self.inject_graph_time_data(pp, *np_tensors)
             app_packet.preview.CopyFrom(pp)
 
             # If there are no sockets currently connected, fire one up!
@@ -162,7 +171,7 @@ class PreviewServer():
 
             self.iol.start()        # yield until server is happy
             self.op_count += 1      # increment the op count
-            return tensors          # fall-through
+            return np_tensors       # fall-through
         return py_func
 
     def profile_ops(self, *tf_tensors, **kwargs):

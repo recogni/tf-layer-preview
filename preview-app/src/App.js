@@ -53,10 +53,7 @@ class App extends Component {
     } else if (pkt.hasError()) {
       this.error(pkt.getMessage())
     } else if (pkt.hasPreview()) {
-      // TODO: Turn this into the current preview vs using the message list.
       let p = pkt.getPreview();
-      console.log(p);
-      console.log(p.toObject());
       this.setState({ preview: p });
     } else {
       console.log("unhandled proto packet", pkt);
@@ -71,14 +68,28 @@ class App extends Component {
   // App render.
   buildPreview() {
     const p = this.state.preview;
-    if (p == undefined) return;
+    if (p === undefined) return;
 
     const name = p.getName();
     const data = p.getData();
+
+    const tensor_defs = p.getTensorsList().map((tensor, i) => {
+      return (
+        <div key={i} className="App-tensor-def">
+          <div>Name:  {tensor.getName()}</div>
+          <div>Type:  {tensor.getType()}</div>
+          <div>Shape: {""+tensor.getShapeList() || "Unknown"}</div>
+          <div>{tensor.getData_asB64()}</div>
+        </div>
+      )
+    });
+
     return (
       <div>
         <h4>{ name }</h4>
-        <div>{ data }</div>
+        <pre>{ data }</pre>
+        { tensor_defs }
+        <hr />
       </div>
     )
   }

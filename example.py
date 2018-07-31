@@ -5,7 +5,7 @@ from tf_layer_preview import PreviewServer
 
 def generator():
     for i in range(1, 100, 1):
-        yield "This is message %d" % (i), i
+        yield "This is message %d with some awesome data" % (i), i
 
 
 def main():
