@@ -6,14 +6,16 @@ HTTP server to preview in-session TF layers
 
 #### `proto`
 
-Contains all app and backend protobuffer definitions.
+Contains all app protobuffer definitions.
+
+#### `preview`
+
+Python backend (tornado HTTP / WS) for the preview app.
 
 #### `preview-app`
 
 React front-end for the browser preview app.
 
-#### `preview.py`
+#### `example`
 
-TODO: Move ^
-
-Contains the HTTP server implementation for the preview library.
+Various usage examples of this library live here.
